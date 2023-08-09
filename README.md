@@ -77,7 +77,42 @@ cp user_env_default.py user_env.py
 python3 main.py
 ```
 
-### Screenshots
+### Running the script periodically
+
+If you wish to run the script periodically you could do so by creating a CRON job in Linux or MacOS or a Windows Task in Windows 10/11/Server.
+
+Below is some guideance on how to do so:
+
+### Linux or MacOS
+
+If new to cron, here are some guides to get you started:  
+https://towardsdatascience.com/how-to-schedule-python-scripts-with-cron-the-only-guide-youll-ever-need-deea2df63b4e
+https://www.hostinger.com/tutorials/cron-job
+
+Steps:
+1.) Set proper permissions (for mac, skip if linux): https://dccxi.com/posts/crontab-not-working-catalina/  
+2.) Run `pwd` and `which python3` to get absolute paths to script files and python binary
+3.) Run `crontab -e` (this will open VIM editor)
+4.) Press `i`, then copy command above (subbing in the absolute paths you found earlier)
+5.) Press `esc` key, then enter `:wq` to save
+
+NOTE: if no log file appears after day, or if running on a mac, ensure proper permissions for cron are set.
+Follow this guide: https://dccxi.com/posts/crontab-not-working-catalina/
+
+### Windows Tasks
+
+If new to Windows Task Scheduler, here are some guides to get you started:  
+https://www.jcchouinard.com/python-automation-using-task-scheduler/
+
+Steps:
+1.) Search for 'Task Scheduler'
+2.) Go to Actions > Create Task...
+3.) Provide a name and description
+4.) Run `pwd` and `where python` to get absolute paths to script files and python binary
+4.) Create a New Action > provide the path to python binary, add the path to the python script as an argument > Save
+5.) Set the trigger (day, frequency, time, etc.)
+
+NOTE: it's recommened to run the task manually through Windows Scheduler first to ensure it works. Check back for errors if no results appear after the scheduled time.
 
 ### API Reference/Documentation (VERY USEFUL TO CHECK OUT!):
 
