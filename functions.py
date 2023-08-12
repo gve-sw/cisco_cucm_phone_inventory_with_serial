@@ -174,9 +174,7 @@ def get_scraped_phone_data(ip_address):
                 model_number = phoneData[bTag + 1].text
             elif bText == "mac address":
                 mac = phoneData[bTag + 1].text
-            # else:
-            #   d = [mac, serial_num, hw_r]
-            #   return d
+
     d = [mac, serial_num, hw_r, model_number]
     return d
 
@@ -213,14 +211,12 @@ def getDevicesDN():
     result = executeQuery(aQuery)
     deviceExtensionsDict = {}
 
-    # f= open("output_firstquery.csv","w+")
-    # f.write("Name," + "DN" + "\n")
     for device in result:
-        deviceExtensionsDict[device["name"]] = device["dn"]
-        # f.write( device['name'] + ","  + device['dn'] + "\n")
+        if device["name"] in deviceExtensionsDict:
+            deviceExtensionsDict[device["name"]] = (
+                deviceExtensionsDict[device["name"]] + ":" + device["dn"]
+            )
+        else:
+            deviceExtensionsDict[device["name"]] = device["dn"]
+
     return deviceExtensionsDict
-
-
-# axl_request()
-# risport_request()
-# get_scraped_phone_data
