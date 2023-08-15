@@ -3,7 +3,7 @@ certifi
 charset-normalizer==2.1.1
 idna==3.4
 isodate==0.6.1
-lxml==4.9.1
+lxml
 platformdirs==2.5.4
 python-dotenv==0.21.0
 pytz==2022.6
