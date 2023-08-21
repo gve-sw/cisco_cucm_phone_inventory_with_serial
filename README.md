@@ -56,6 +56,26 @@ source (venv name)/bin/activate
 pip3 install -r requirements.txt file
 ```
 
+If your machine does not have internet access or a firewall prevents it from downloading Python libraries, you can use a separate machine that can download them and zip up the needed libraries to move onto the target machine and then install them locally there.
+
+For this, first execute these commands on the machine that does have full internet access:
+
+```sh
+mkdir dependencies
+pip3 download -r requirements.txt -d ./dependencies
+```
+
+Now compress that dependencies directory into a file using zip, tar or any other archiving utility and transfer it to the destination machine.
+
+On the destination machine that does not have full internet access, re-create the dependencies folder by extracting the archive you transfered to it.
+
+Then execute the following commands:
+
+```sh
+cd dependencies
+pip3 install * -f ./ --no-index
+```
+
 6. Edit user_env_default.py and add your CUCM environment and user details example:
 
 ```
@@ -71,7 +91,15 @@ CUCM_PASSWORD = "dCloud12345!"
 cp user_env_default.py user_env.py
 ```
 
-8. Enter terminal command to run the script:
+8. If you wish to only include certain device models in the report, edit the `PRODUCT_TYPE_FILTER` array in the `main.py` source file to only include the models you are interested in. Leave the array empty to include all devices.
+
+Examples:
+
+`PRODUCT_TYPE_FILTER = ["Cisco 8831", "Cisco 8832"]` reports only on Cisco IP Phones models 8831 and 8832.
+
+`PRODUCT_TYPE_FILTER = []` reports on all phone models.
+
+9. Enter terminal command to run the script:
 
 ```sh
 python3 main.py

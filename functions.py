@@ -220,3 +220,56 @@ def getDevicesDN():
             deviceExtensionsDict[device["name"]] = device["dn"]
 
     return deviceExtensionsDict
+
+
+def getUserManager(userID):
+    # Disable HTTPS certificate validation check - not recommended for production
+    if hasattr(ssl, "_create_unverified_context"):
+        ssl._create_default_https_context = ssl._create_unverified_context
+
+    tns = "http://schemas.cisco.com/ast/soap/"
+    imp = Import("http://schemas.xmlsoap.org/soap/encoding/")
+    imp.filter.add(tns)
+
+    # adding the ip address provided onto the url link for the API call
+    url = "https://" + user_env.CUCM_LOCATION + "/axl/"
+
+    # connecting to CUCM device using axl
+    axl = Client(
+        "file:" + os.getcwd() + "/schema/AXLAPI.wsdl",
+        location=url,
+        faults=False,
+        plugins=[ImportDoctor(imp)],
+        username=user_env.CUCM_USER,
+        password=user_env.CUCM_PASSWORD,
+    )
+
+    # edit returnedTags to receive different information
+    res = axl.service.listUser(
+        {"userid": userID},
+        returnedTags={
+            "firstName": "",
+            "lastName": "",
+            "userid": "",
+            "manager": "",
+        },
+    )
+    if res[1]["return"]:
+        users = res[1]["return"]["user"]
+        for user in users:
+            theFirst = ""
+            theLast = ""
+            theUserID = ""
+            theManager = ""
+
+            if user.firstName:
+                theFirst = user.firstName
+            if user.lastName:
+                theLast = user.lastName
+            if user.userid:
+                theUserID = user.userid
+            if user.manager:
+                theManager = user.manager
+        return theManager
+    else:
+        return ""

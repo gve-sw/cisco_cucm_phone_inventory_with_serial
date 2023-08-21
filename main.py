@@ -15,6 +15,15 @@ import requests
 import time
 import functions
 
+# If you wish to limit the inventory to devices with a specific Product Type (i.e. "Cisco 8841")
+# then enter the product types you wish to include in the PRODUCT_TYPE_FILTER array. Leave empty for no filtering.
+PRODUCT_TYPE_FILTER = [
+    "Cisco 3905",
+    "Cisco 8841",
+    "Cisco 8851",
+    "Cisco 8831",
+    "Cisco 8832",
+]
 
 # Model Number: CP-8865
 # Hardware Revision: V01
@@ -69,68 +78,79 @@ def main():
         device_name = device_axl["name"]
         device = {}
         if device_name[0:3] == "SEP":
-            print("device created for ", device_name)
+            if (
+                len(PRODUCT_TYPE_FILTER) == 0
+                or device_axl["product"] in PRODUCT_TYPE_FILTER
+            ):
+                print("device created for ", device_name)
 
-            device["name"] = device_name
+                device["name"] = device_name
 
-            if device_name in deviceExtensionsDict.keys():
-                device["extension"] = deviceExtensionsDict[device_name]
-            else:
-                device["extension"] = ""
+                if device_name in deviceExtensionsDict.keys():
+                    device["extension"] = deviceExtensionsDict[device_name]
+                else:
+                    device["extension"] = ""
 
-            device["model"] = device_axl["model"]
-            device["networkLocation"] = device_axl["networkLocation"]
-            device["product"] = device_axl["product"]
-            device["description"] = device_axl["description"]
-            try:
-                device["ownerUserName"] = device_axl["ownerUserName"]["value"]
-            except:
-                device["ownerUserName"] = ""
-            device["locationName"] = device_axl["locationName"]
-            device["callingSearchSpaceName"] = device_axl["callingSearchSpaceName"][
-                "value"
-            ]
-            device["devicePoolName"] = device_axl["devicePoolName"]["value"]
+                device["model"] = device_axl["model"]
+                device["networkLocation"] = device_axl["networkLocation"]
+                device["product"] = device_axl["product"]
+                device["description"] = device_axl["description"]
+                try:
+                    device["ownerUserName"] = device_axl["ownerUserName"]["value"]
+                except:
+                    device["ownerUserName"] = ""
+                device["ownerManager"] = functions.getUserManager(
+                    device["ownerUserName"]
+                )
+                device["locationName"] = device_axl["locationName"]
+                device["callingSearchSpaceName"] = device_axl["callingSearchSpaceName"][
+                    "value"
+                ]
+                device["devicePoolName"] = device_axl["devicePoolName"]["value"]
 
-            if device_name in indexed_devices_risport.keys():
-                device_risport = indexed_devices_risport[device_name]
+                if device_name in indexed_devices_risport.keys():
+                    device_risport = indexed_devices_risport[device_name]
 
-                device["ip_address"] = device_risport["IpAddress"]
-                device["status"] = device_risport["Status"]
+                    device["ip_address"] = device_risport["IpAddress"]
+                    device["status"] = device_risport["Status"]
 
-                if device["ip_address"] is None:
+                    if device["ip_address"] is None:
+                        device["ip_address"] = "unassigned"
+                        device["serial_number"] = "unavailable"
+                        device["mac"] = "unavailable"
+                        device["hardware_revision"] = "unavailable"
+                        device["model_number"] = "unavailable"
+                        device["mpp_eligible"] = "unavailable"
+                    else:
+                        # calling function to retrieve serial number based on IP address (visiting the phone web page)
+                        device_data = functions.get_scraped_phone_data(
+                            device["ip_address"]
+                        )
+                        device["mac"] = device_data[0]
+                        device["serial_number"] = device_data[1]
+                        device["hardware_revision"] = device_data[2]
+                        device["model_number"] = device_data[3]
+                        if device["model_number"] in ELIGIBLE:
+                            device["mpp_eligible"] = "ELIGIBLE"
+                            if device["model_number"] in SUPPORTED_MIN_HW_CHECK.keys():
+                                if (
+                                    device["hardware_revision"]
+                                    < SUPPORTED_MIN_HW_CHECK[device["model_number"]]
+                                ):
+                                    device["mpp_eligible"] = "NOT SUPPORTED"
+                        else:
+                            device["mpp_eligible"] = "NON ELIGIBLE"
+                else:
                     device["ip_address"] = "unassigned"
                     device["serial_number"] = "unavailable"
                     device["mac"] = "unavailable"
                     device["hardware_revision"] = "unavailable"
                     device["model_number"] = "unavailable"
                     device["mpp_eligible"] = "unavailable"
-                else:
-                    # calling function to retrieve serial number based on IP address (visiting the phone web page)
-                    device_data = functions.get_scraped_phone_data(device["ip_address"])
-                    device["mac"] = device_data[0]
-                    device["serial_number"] = device_data[1]
-                    device["hardware_revision"] = device_data[2]
-                    device["model_number"] = device_data[3]
-                    if device["model_number"] in ELIGIBLE:
-                        device["mpp_eligible"] = "ELIGIBLE"
-                        if device["model_number"] in SUPPORTED_MIN_HW_CHECK.keys():
-                            if (
-                                device["hardware_revision"]
-                                < SUPPORTED_MIN_HW_CHECK[device["model_number"]]
-                            ):
-                                device["mpp_eligible"] = "NOT SUPPORTED"
-                    else:
-                        device["mpp_eligible"] = "NON ELIGIBLE"
-            else:
-                device["ip_address"] = "unassigned"
-                device["serial_number"] = "unavailable"
-                device["mac"] = "unavailable"
-                device["hardware_revision"] = "unavailable"
-                device["model_number"] = "unavailable"
-                device["mpp_eligible"] = "unavailable"
 
-            device_list.append(device)
+                device_list.append(device)
+            else:
+                print("device skipped; not in PRODUCT_TYPE_FILTER: ", device_name)
 
     return device_list
 
@@ -143,6 +163,7 @@ f.write(
     "Description,"
     + "Extension,"
     + "Owner UserID,"
+    + "Owner Manager,"
     + "MAC Address,"
     + "Serial,"
     + "Product Type"
@@ -155,6 +176,8 @@ for device in devices_list:
         + device["extension"]
         + ","
         + device["ownerUserName"]
+        + ","
+        + device["ownerManager"]
         + ","
         + device["mac"]
         + ","
