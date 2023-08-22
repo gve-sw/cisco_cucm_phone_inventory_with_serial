@@ -102,11 +102,9 @@ def main():
                 device["ownerManager"] = functions.getUserManager(
                     device["ownerUserName"]
                 )
-                device["locationName"] = device_axl["locationName"]
-                device["callingSearchSpaceName"] = device_axl["callingSearchSpaceName"][
-                    "value"
-                ]
-                device["devicePoolName"] = device_axl["devicePoolName"]["value"]
+                # device["locationName"] = device_axl["locationName"]
+                # device["callingSearchSpaceName"] = device_axl["callingSearchSpaceName"]["value"]
+                # device["devicePoolName"] = device_axl["devicePoolName"]["value"]
 
                 if device_name in indexed_devices_risport.keys():
                     device_risport = indexed_devices_risport[device_name]
