@@ -82,7 +82,6 @@ If using Windows:
 
 ```sh
 cd dependencies
-Windows:
 for %x in (dir *.whl) do python3 -m pip install %x
 ```
 
