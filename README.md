@@ -27,7 +27,9 @@ Python script that generates a CSV inventory file named inventory_w_seria.csv wi
 - Python 3.10 or later
 - AXL CUCM Toolkit Files
 - Enable AXL on CUCM (https://www.uplinx.com/cleanup-tool/webhelp/index.htm?page=Enable-AXL-on-CUCM.htm)
+
 - CUCM Admin Credentials or user that has AXL API permissions
+- CUCM Admin Credentials or user that also has permissions for risport: https://developer.cisco.com/site/sxml/learn/getting-started/risport/
 - CUCM and this code has to be hosted under the same subnet for the communication to go through
 
 # Setup instructions

@@ -151,12 +151,24 @@ def risport_request():
 
 # function to extract serial number from the phone's web page
 def get_scraped_phone_data(ip_address):
-    url = "http://" + ip_address
+    ctx = ssl.create_default_context()
+    ctx.check_hostname = False
+    ctx.verify_mode = ssl.CERT_NONE
+    url = "https://" + ip_address
+    https_failed = False
     try:
-        fhand = urllib.request.urlopen(url).read()
+        fhand = urllib.request.urlopen(url, context=ctx).read()
     except:
-        print("unable to reach site")
-        return "unaccessible"
+        print("Unable to reach site with https, trying http for URL ", url)
+        https_failed = True
+
+    if https_failed:
+        url = "http://" + ip_address
+        try:
+            fhand = urllib.request.urlopen(url).read()
+        except:
+            print("Also unable to reach site with http for URL ", url)
+            return "unaccessible"
 
     soup = BeautifulSoup(fhand, "html.parser")
     phoneData = soup.find_all("b")

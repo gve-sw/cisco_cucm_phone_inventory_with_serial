@@ -82,7 +82,7 @@ def main():
                 len(PRODUCT_TYPE_FILTER) == 0
                 or device_axl["product"] in PRODUCT_TYPE_FILTER
             ):
-                print("device created for ", device_name)
+                print("creating entry for ", device_name)
 
                 device["name"] = device_name
 
