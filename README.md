@@ -71,9 +71,19 @@ On the destination machine that does not have full internet access, re-create th
 
 Then execute the following commands:
 
+If using Linux/MacOS:
+
 ```sh
 cd dependencies
 pip3 install * -f ./ --no-index
+```
+
+If using Windows:
+
+```sh
+cd dependencies
+Windows:
+for %x in (dir *.whl) do python3 -m pip install %x
 ```
 
 6. Edit user_env_default.py and add your CUCM environment and user details example:
