@@ -23,11 +23,11 @@ $ cp user_env_default.py env_user.py
 
 # User Input
 
-# Example path,location, and credentials from Cisco DCLOUD. Include your information. 
+# Example path,location, and credentials from Cisco DCLOUD. Include your information.
 
-WSDL_PATH = "<PATH TO FOLDER WHERE YOU DOWNLOAD WSDL>/app/schema/AXLAPI.wsdl"
+WSDL_PATH = "./schema/AXLAPI.wsdl"
 CUCM_LOCATION = "<IP ADDRESS OF CUCM>"
-CUCM_USER = '<USERNAME>'
-CUCM_PASSWORD = '<PASSWORD>'
+CUCM_USER = "<USERNAME>"
+CUCM_PASSWORD = "<PASSWORD>"
 
 # End User Input

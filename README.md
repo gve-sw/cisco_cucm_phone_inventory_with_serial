@@ -82,7 +82,7 @@ If using Windows:
 
 ```sh
 cd dependencies
-for %x in (dir *.whl) do python3 -m pip install %x
+for %x in (*.whl) do python3 -m pip install %x
 ```
 
 6. Edit user_env_default.py and add your CUCM environment and user details example:
