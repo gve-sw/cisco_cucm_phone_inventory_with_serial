@@ -48,8 +48,16 @@ Python script that generates a CSV inventory file named inventory_w_seria.csv wi
 
 4. enter the virtual environment by entering the terminal command
 
+If using Linux/MacOS:
+
 ```sh
 source (venv name)/bin/activate
+```
+
+If using Windows:
+
+```sh
+.\(venv name)\Scripts\activate.bat
 ```
 
 5. install dependencies by entering the terminal command
@@ -86,6 +94,12 @@ If using Windows:
 cd dependencies
 for %x in (*.whl) do python3 -m pip install %x
 ```
+
+NOTE: You might get "Could not fetch URL" errors when running the pip install commands above due to
+the order in which the libraries are listed in the folder... if pip cannot find a library that another one
+is installing depends on, it still tries to download that dependency instead of looking for the file in the
+folder. If this happens, just re-run the pip install command or loop as many times as needed until you get
+a "clean" run where, for each library, you get a "Requirement already satisfied:.." message.
 
 6. Edit user_env_default.py and add your CUCM environment and user details example:
 
